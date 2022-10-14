@@ -6,11 +6,18 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/10 08:18:09 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/14 03:47:49 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/14 15:54:09 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+typedef struct s_list
+{
+	char			*content;
+	int				fd;
+	struct s_list	*next;
+} t_list;
 
 char	*ft_join(char *s1, char *s2, int size)
 {
