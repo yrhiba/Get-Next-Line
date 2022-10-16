@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/16 02:57:40 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 16:35:44 by yrhiba           ###   ########.fr       */
+/*   Created: 2022/10/16 16:44:30 by yrhiba            #+#    #+#             */
+/*   Updated: 2022/10/16 17:05:58 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_content(char *content, int fd, int *r)
 {
@@ -72,4 +72,17 @@ int	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
+}
+
+t_list	*ft_lstnew(char *content, int fd)
+{
+	t_list	*node;
+
+	node = (t_list *)malloc(sizeof(t_list));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->fd = fd;
+	node->next = 0;
+	return (node);
 }

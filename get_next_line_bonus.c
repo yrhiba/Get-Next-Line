@@ -1,16 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/16 02:43:18 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 16:35:49 by yrhiba           ###   ########.fr       */
+/*   Created: 2022/10/16 16:45:32 by yrhiba            #+#    #+#             */
+/*   Updated: 2022/10/16 17:44:09 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
+
+char	*ft_get_content(t_list **list, int fd)
+{
+	t_list	*new;
+	char	*rtn;
+
+	while (*list)
+	{
+		if ((*list)->fd == fd)
+			return ((*list)->content);
+		*list = (*list)->next;
+	}
+	rtn = (char *)malloc(sizeof(char));
+	if (!rtn)
+		return (NULL);
+	*rtn = '\0';
+	new = ft_lstnew(rtn, fd);
+	if (!new)
+	{
+		free(rtn);
+		return (NULL);
+	}
+	new->next = *list;
+	*list = new;
+	return ((*list)->content);
+}
 
 void	get_line_3(char *content, char *nw_content, char *line)
 {
@@ -69,17 +95,21 @@ char	*get_line_1(char **content, int fd)
 
 char	*get_next_line(int fd)
 {
-	static char	*content;
-	char		*line;
+	static t_list	*list = 0;
+	t_list			*tmp;
+	char			*content;
+	char			*line;
 
-	content = 0;
+	content = ft_get_content(&list, fd);
 	if (!content)
-	{
-		content = (char *)malloc(sizeof(char));
-		if (!content)
-			return (NULL);
-		*content = '\0';
-	}
+		return (NULL);
 	line = get_line_1(&content, fd);
+	tmp = list;
+	while (tmp)
+	{
+		if (tmp->fd == fd)
+			tmp->content = content;
+		tmp = tmp->next;
+	}
 	return (line);
 }
