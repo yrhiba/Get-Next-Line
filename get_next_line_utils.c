@@ -6,44 +6,17 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/10 08:18:09 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/14 17:50:29 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/16 00:49:01 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-typedef struct s_list
-{
-	char			*content;
-	int				fd;
-	struct s_list	*next;
-}					t_list;
-
-char	*ft_substr(char *s, int start, int len)
-{
-	int		i;
-	char	*rtn;
-
-	rtn = (char *)malloc(sizeof(char) * (len + 1));
-	if (!rtn)
-		return (0);
-	i = 0;
-	while (i < len)
-	{
-		rtn[i] = s[i + start];
-		i++;
-	}
-	rtn[i] = '\0';
-	return (rtn);
-}
-
-// return 1 if content have '\n' and mofify (char *)<content && nl>
-// by spliting content to nl;
-// return 0 if not
-int	ft_get_cline(char *content, char *nl, int index)
+int	ft_get_cline(char **content, char *nl, int index)
 {
 	int		i;
 	int		j;
+	char *new_content;
 
 	if (index == -1)
 	{
@@ -54,17 +27,25 @@ int	ft_get_cline(char *content, char *nl, int index)
 	nl = (char *)malloc(sizeof(char) * (index + 1));
 	if (!nl)
 		return (-1);
-	i = 0;
-	while (nl[i] != '\n' && nl[i])
+	new_content = (char *)malloc(sizeof(char) * (ft_strlen(*content) - index + 1));
+	if (!new_content)
 	{
-		nl[i] = content[i];
+		free(nl);
+		return (-1);
+	}
+	i = 0;
+	while ((*content)[i] != '\n')
+	{
+		nl[i] = (*content)[i];
 		i++;
 	}
-	nl[i] = '\0';
+	nl[i++] = '\0';
 	j = 0;
-	while (content[j])
-		content[j++] = content[i++];
-	content[j] = '\0';
+	while ((*content)[i])
+		new_content[j++] = (*content)[i++];
+	new_content[j] = '\0';
+	free((*content));
+	*content = new_content;
 	return (1);
 }
 
