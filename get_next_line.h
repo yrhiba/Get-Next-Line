@@ -6,17 +6,14 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:44:00 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 16:44:16 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/16 17:59:21 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# define BUFFER_SIZE 5
-
 # include <fcntl.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
