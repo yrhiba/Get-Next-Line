@@ -6,28 +6,11 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:57:40 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 16:35:44 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/17 18:02:07 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-char	*read_content(char *content, int fd, int *r)
-{
-	char	c[BUFFER_SIZE + 1];
-
-	*c = '\0';
-	*r = read(fd, c, BUFFER_SIZE);
-	if (*r == -1)
-	{
-		free(content);
-		return (NULL);
-	}
-	c[*r] = '\0';
-	if (*c)
-		content = ft_join(content, c);
-	return (content);
-}
 
 char	*ft_join(char *s1, char *s2)
 {
@@ -72,4 +55,45 @@ int	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
+}
+
+t_list	*ft_lstnew(char *content, int fd)
+{
+	t_list	*node;
+
+	node = (t_list *)malloc(sizeof(t_list));
+	if (!node)
+		return (NULL);
+	node->content = content;
+	node->fd = fd;
+	node->next = 0;
+	return (node);
+}
+
+char	*ft_get_content(t_list **list_o, int fd)
+{
+	t_list	*new;
+	t_list	*list;
+	char	*rtn;
+
+	list = *list_o;
+	while (list)
+	{
+		if (list->fd == fd)
+			return (list->content);
+		list = list->next;
+	}
+	rtn = (char *)malloc(sizeof(char));
+	if (!rtn)
+		return (NULL);
+	*rtn = '\0';
+	new = ft_lstnew(rtn, fd);
+	if (!new)
+	{
+		free(rtn);
+		return (NULL);
+	}
+	new->next = *list_o;
+	*list_o = new;
+	return ((*list_o)->content);
 }

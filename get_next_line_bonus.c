@@ -5,37 +5,36 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/16 16:45:32 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 17:44:09 by yrhiba           ###   ########.fr       */
+/*   Created: 2022/10/16 02:43:18 by yrhiba            #+#    #+#             */
+/*   Updated: 2022/10/18 15:31:42 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_get_content(t_list **list, int fd)
+char	*read_content(char *content, int fd, int *r)
 {
-	t_list	*new;
-	char	*rtn;
+	char	*c;
 
-	while (*list)
+	c = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!c)
 	{
-		if ((*list)->fd == fd)
-			return ((*list)->content);
-		*list = (*list)->next;
-	}
-	rtn = (char *)malloc(sizeof(char));
-	if (!rtn)
-		return (NULL);
-	*rtn = '\0';
-	new = ft_lstnew(rtn, fd);
-	if (!new)
-	{
-		free(rtn);
+		free(content);
 		return (NULL);
 	}
-	new->next = *list;
-	*list = new;
-	return ((*list)->content);
+	*c = '\0';
+	*r = read(fd, c, BUFFER_SIZE);
+	if (*r == -1)
+	{
+		free(c);
+		free(content);
+		return (NULL);
+	}
+	c[*r] = '\0';
+	if (*c)
+		content = ft_join(content, c);
+	free(c);
+	return (content);
 }
 
 void	get_line_3(char *content, char *nw_content, char *line)
@@ -83,23 +82,36 @@ char	*get_line_1(char **content, int fd)
 	int		r;
 
 	r = 1;
-	while (ft_strchr(*content) == -1 && r != 0)
+	line = (char *)malloc(sizeof(char));
+	*line = '\0';
+	while (*content && ft_strchr(*content) == -1 && r != 0)
 		*content = read_content(*content, fd, &r);
 	if (!*content)
+	{
+		free(line);
 		return (NULL);
-	if (ft_strchr(*content) == -1)
-		return (NULL);
+	}
+	if (r == 0)
+	{
+		line = ft_join(line, *content);
+		free(*content);
+		*content = 0;
+		return (line);
+	}
+	free(line);
 	line = get_line_2(content, ft_strchr(*content));
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list = 0;
+	static t_list	*list;
 	t_list			*tmp;
 	char			*content;
 	char			*line;
 
+	if (fd < 0)
+		return (NULL);
 	content = ft_get_content(&list, fd);
 	if (!content)
 		return (NULL);

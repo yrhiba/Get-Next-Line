@@ -6,11 +6,36 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:43:18 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/16 16:35:49 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/17 18:10:09 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char	*read_content(char *content, int fd, int *r)
+{
+	char	*c;
+
+	c = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!c)
+	{
+		free(content);
+		return (NULL);
+	}
+	*c = '\0';
+	*r = read(fd, c, BUFFER_SIZE);
+	if (*r == -1)
+	{
+		free(c);
+		free(content);
+		return (NULL);
+	}
+	c[*r] = '\0';
+	if (*c)
+		content = ft_join(content, c);
+	free(c);
+	return (content);
+}
 
 void	get_line_3(char *content, char *nw_content, char *line)
 {
@@ -57,29 +82,46 @@ char	*get_line_1(char **content, int fd)
 	int		r;
 
 	r = 1;
-	while (ft_strchr(*content) == -1 && r != 0)
+	line = (char *)malloc(sizeof(char));
+	*line = '\0';
+	while (*content && ft_strchr(*content) == -1 && r != 0)
 		*content = read_content(*content, fd, &r);
 	if (!*content)
+	{
+		free(line);
 		return (NULL);
-	if (ft_strchr(*content) == -1)
-		return (NULL);
+	}
+	if (r == 0)
+	{
+		line = ft_join(line, *content);
+		free(*content);
+		*content = 0;
+		return (line);
+	}
+	free(line);
 	line = get_line_2(content, ft_strchr(*content));
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*content;
-	char		*line;
+	static t_list	*list;
+	t_list			*tmp;
+	char			*content;
+	char			*line;
 
-	content = 0;
+	if (fd < 0)
+		return (NULL);
+	content = ft_get_content(&list, fd);
 	if (!content)
-	{
-		content = (char *)malloc(sizeof(char));
-		if (!content)
-			return (NULL);
-		*content = '\0';
-	}
+		return (NULL);
 	line = get_line_1(&content, fd);
+	tmp = list;
+	while (tmp)
+	{
+		if (tmp->fd == fd)
+			tmp->content = content;
+		tmp = tmp->next;
+	}
 	return (line);
 }
