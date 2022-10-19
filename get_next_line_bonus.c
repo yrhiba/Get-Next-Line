@@ -6,7 +6,7 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:43:18 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/18 15:31:42 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/19 04:18:53 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	*get_line_2(char **content, int index)
 	line = (char *)malloc(sizeof(char) * (index + 2));
 	if (!line)
 		return (NULL);
-	nw_content = (char *)malloc(sizeof(char) * (ft_strlen(*content) - index));
+	nw_content = (char *)malloc(sizeof(char) * (ft_strlc(*content, 0) - index));
 	if (!nw_content)
 	{
 		free(line);
@@ -73,34 +73,38 @@ char	*get_line_2(char **content, int index)
 	get_line_3(*content, nw_content, line);
 	free(*content);
 	*content = nw_content;
+	if (content && *content == '\0')
+		return (free(content), *content = 0, line);
 	return (line);
 }
 
 char	*get_line_1(char **content, int fd)
 {
-	char	*line;
+	char	*l;
 	int		r;
 
 	r = 1;
-	line = (char *)malloc(sizeof(char));
-	*line = '\0';
-	while (*content && ft_strchr(*content) == -1 && r != 0)
+	l = (char *)malloc(sizeof(char));
+	if (!l)
+		return (NULL);
+	*l = '\0';
+	while (*content && ft_strlc(*content, 1) == -1 && r != 0)
 		*content = read_content(*content, fd, &r);
 	if (!*content)
 	{
-		free(line);
+		free(l);
 		return (NULL);
 	}
 	if (r == 0)
 	{
-		line = ft_join(line, *content);
+		l = ft_join(l, *content);
 		free(*content);
 		*content = 0;
-		return (line);
+		if (*l == '\0')
+			return (free(l), l = NULL);
+		return (l);
 	}
-	free(line);
-	line = get_line_2(content, ft_strchr(*content));
-	return (line);
+	return (free(l), l = get_line_2(content, ft_strlc(*content, 1)), l);
 }
 
 char	*get_next_line(int fd)
@@ -123,5 +127,7 @@ char	*get_next_line(int fd)
 			tmp->content = content;
 		tmp = tmp->next;
 	}
+	if (!content)
+		delete_node(&list, fd);
 	return (line);
 }

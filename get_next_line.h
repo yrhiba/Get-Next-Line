@@ -6,7 +6,7 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:44:00 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/17 20:45:29 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/19 03:06:46 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-int					ft_strlen(const char *s);
-int					ft_strchr(char *s);
+int					ft_strlc(char *s, int len0_or_chr1);
 char				*ft_join(char *s1, char *s2);
 char				*get_next_line(int fd);
 t_list				*ft_lstnew(char *content, int fd);
 char				*ft_get_content(t_list **list_o, int fd);
+void				delete_node(t_list **list, int fd);
 
 #endif

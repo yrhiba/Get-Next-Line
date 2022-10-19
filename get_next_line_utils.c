@@ -6,7 +6,7 @@
 /*   By: yrhiba <yrhiba@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/16 02:57:40 by yrhiba            #+#    #+#             */
-/*   Updated: 2022/10/17 18:02:07 by yrhiba           ###   ########.fr       */
+/*   Updated: 2022/10/19 03:06:41 by yrhiba           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ char	*ft_join(char *s1, char *s2)
 	char	*tmp;
 	int		i;
 
-	rtn = (char *)malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	rtn = (char *)malloc(sizeof(char) * (ft_strlc(s1, 0) + ft_strlc(s2, 0)
+				+ 1));
 	if (!rtn)
 		return (NULL);
 	tmp = rtn;
@@ -33,28 +34,24 @@ char	*ft_join(char *s1, char *s2)
 	return (rtn);
 }
 
-int	ft_strchr(char *s)
+int	ft_strlc(char *s, int len0_or_chr1)
 {
 	int	i;
 
 	i = 0;
-	while (s[i])
+	while (s[i] && len0_or_chr1)
 	{
 		if (s[i] == '\n')
 			return (i);
 		i++;
 	}
+	if (!len0_or_chr1)
+	{
+		while (s[i])
+			i++;
+		return (i);
+	}
 	return (-1);
-}
-
-int	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
 }
 
 t_list	*ft_lstnew(char *content, int fd)
@@ -96,4 +93,30 @@ char	*ft_get_content(t_list **list_o, int fd)
 	new->next = *list_o;
 	*list_o = new;
 	return ((*list_o)->content);
+}
+
+void	delete_node(t_list **list, int fd)
+{
+	t_list	*tmp;
+	t_list	*nex;
+	t_list	*prev;
+
+	tmp = *list;
+	prev = NULL;
+	while (tmp)
+	{
+		nex = tmp->next;
+		if (tmp->fd == fd)
+		{
+			free(tmp->content);
+			free(tmp);
+			if (prev)
+				prev->next = nex;
+			else
+				*list = nex;
+			return ;
+		}
+		prev = tmp;
+		tmp = tmp->next;
+	}
 }
